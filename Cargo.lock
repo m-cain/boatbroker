@@ -167,6 +167,7 @@ name = "boatbroker"
 version = "0.1.0"
 dependencies = [
  "axum",
+ "hyper",
  "serde",
  "sqlx",
  "tokio",
@@ -1115,6 +1116,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "signal-hook-registry"
+version = "1.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d8229b473baa5980ac72ef434c4415e70c4b5e71b423043adb4ba059f89c99a1"
+dependencies = [
+ "libc",
+]
+
+[[package]]
 name = "signature"
 version = "2.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1495,6 +1505,7 @@ dependencies = [
  "mio",
  "num_cpus",
  "pin-project-lite",
+ "signal-hook-registry",
  "socket2 0.5.5",
  "tokio-macros",
  "windows-sys",
