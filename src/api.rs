@@ -1,5 +1,4 @@
-use crate::auth;
-use crate::state::AppState;
+use crate::{auth, state::AppState};
 use axum::Router;
 use std::{future::Future, net::SocketAddr};
 
