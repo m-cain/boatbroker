@@ -1,5 +1,4 @@
-use crate::api::state::AppState;
-
+use crate::state::AppState;
 use axum::{extract::State, http::StatusCode, response::IntoResponse, routing::post, Router};
 use serde::Deserialize;
 use sqlx::PgPool;

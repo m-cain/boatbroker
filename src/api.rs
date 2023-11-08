@@ -1,10 +1,7 @@
-pub mod auth;
-pub mod state;
-
+use crate::auth;
+use crate::state::AppState;
 use axum::Router;
 use std::{error::Error, net::SocketAddr};
-
-use self::state::AppState;
 
 fn routes(state: AppState) -> Router {
     Router::new().nest("/auth", auth::routes(state))
