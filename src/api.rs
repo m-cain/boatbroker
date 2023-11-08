@@ -1,5 +1,10 @@
-use axum::{routing::get, Router};
+pub mod auth;
+pub mod state;
 
-pub fn router() -> Router {
-    Router::new().route("/", get(|| async { "Boat broker!" }))
+use axum::Router;
+
+use self::state::AppState;
+
+pub fn routes(state: AppState) -> Router {
+    Router::new().nest("/auth", auth::routes(state))
 }
