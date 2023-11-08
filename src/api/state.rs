@@ -3,7 +3,7 @@ use sqlx::{postgres::PgPoolOptions, PgPool};
 use std::env;
 
 #[derive(Clone)]
-struct PostgresSettings {
+pub struct PostgresSettings {
     dsn: String,
     max_connections: u32,
     min_connections: u32,
@@ -27,13 +27,18 @@ impl PostgresSettings {
 }
 
 #[derive(Clone)]
-struct Settings {
-    postgres: PostgresSettings,
+pub struct Settings {
+    pub port: u16,
+    pub postgres: PostgresSettings,
 }
 
 impl Settings {
     pub fn from_env() -> Self {
         Self {
+            port: env::var("PORT")
+                .unwrap_or("3000".into())
+                .parse()
+                .expect("PORT must be an integer"),
             postgres: PostgresSettings::from_env(),
         }
     }
@@ -47,8 +52,8 @@ impl FromRef<AppState> for PgPool {
 
 #[derive(Clone)]
 pub struct AppState {
-    db_pool: PgPool,
-    settings: Settings,
+    pub db_pool: PgPool,
+    pub settings: Settings,
 }
 
 impl AppState {
