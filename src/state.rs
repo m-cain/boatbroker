@@ -19,7 +19,7 @@ impl AuthSettings {
                 .parse()
                 .expect("AUTH_ACCESS_TOKEN_EXP_MINUTES must be an integer"),
             refresh_token_exp_minutes: env::var("AUTH_REFRESH_TOKEN_EXP_MINUTES")
-                .unwrap_or((24 * 60 * 90).to_string().into())
+                .unwrap_or((24 * 60 * 90).to_string())
                 .parse()
                 .expect("AUTH_REFRESH_TOKEN_EXP_MINUTES must be an integer"),
         }
