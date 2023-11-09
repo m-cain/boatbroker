@@ -12,7 +12,7 @@ async fn shutdown(sig: impl Future<Output = ()>, state: AppState) {
     state.db_pool.close().await;
 }
 
-pub async fn serve<S: Future<Output = ()>>(sig: S) -> () {
+pub async fn serve<S: Future<Output = ()>>(sig: S) {
     let state = AppState::from_env().await;
     let routes = routes(state.clone());
 
