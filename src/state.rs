@@ -3,10 +3,40 @@ use sqlx::{postgres::PgPoolOptions, PgPool};
 use std::env;
 
 #[derive(Clone)]
+pub struct AuthSettings {
+    pub signing_secret: String,
+    pub access_token_exp_minutes: u16,
+    pub refresh_token_exp_minutes: u16,
+}
+
+impl AuthSettings {
+    fn from_env() -> Self {
+        Self {
+            signing_secret: env::var("AUTH_SIGNING_SECRET")
+                .expect("AUTH_SIGNING_SECRET must be set"),
+            access_token_exp_minutes: env::var("AUTH_ACCESS_TOKEN_EXP_MINUTES")
+                .unwrap_or("30".into())
+                .parse()
+                .expect("AUTH_ACCESS_TOKEN_EXP_MINUTES must be an integer"),
+            refresh_token_exp_minutes: env::var("AUTH_REFRESH_TOKEN_EXP_MINUTES")
+                .unwrap_or((24 * 60 * 90).to_string().into())
+                .parse()
+                .expect("AUTH_REFRESH_TOKEN_EXP_MINUTES must be an integer"),
+        }
+    }
+}
+
+impl FromRef<AppState> for AuthSettings {
+    fn from_ref(state: &AppState) -> Self {
+        state.settings.auth.clone()
+    }
+}
+
+#[derive(Clone)]
 pub struct PostgresSettings {
-    dsn: String,
-    max_connections: u32,
-    min_connections: u32,
+    pub dsn: String,
+    pub max_connections: u32,
+    pub min_connections: u32,
 }
 
 impl PostgresSettings {
@@ -28,6 +58,7 @@ impl PostgresSettings {
 
 #[derive(Clone)]
 pub struct Settings {
+    pub auth: AuthSettings,
     pub port: u16,
     pub postgres: PostgresSettings,
 }
@@ -35,6 +66,7 @@ pub struct Settings {
 impl Settings {
     pub fn from_env() -> Self {
         Self {
+            auth: AuthSettings::from_env(),
             port: env::var("PORT")
                 .unwrap_or("3000".into())
                 .parse()
