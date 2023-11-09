@@ -20,4 +20,3 @@ repos:
     hooks:
       - id: sqlfluff-fix
         types: [sql]
-        args: ["--dialect", "postgres"]
