@@ -10,6 +10,7 @@ axum = "0.6"
 chrono = "0.4"
 hmac = "0.12"
 jwt = "0.16"
+pbkdf2 = { version = "0.12", features = ["simple"] }
 serde = { version = "1", features = ["derive"] }
 sha2 = "0.10"
 sqlx = { version = "0.7", features = [
