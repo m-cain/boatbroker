@@ -9,10 +9,19 @@ use axum::{
 use chrono::{DateTime, Duration, Utc};
 use hmac::{Hmac, Mac};
 use jwt::SignWithKey;
+use pbkdf2::{
+    password_hash::{rand_core::OsRng, PasswordHash, PasswordHasher, PasswordVerifier, SaltString},
+    Pbkdf2,
+};
 use serde::{Deserialize, Serialize};
 use sha2::Sha256;
 use sqlx::{query_as, types::Uuid, Acquire, PgPool, Postgres, Transaction};
-use std::{collections::BTreeMap, error::Error, ops::Add};
+use std::{
+    collections::BTreeMap,
+    error::Error,
+    fmt::{self, Display, Formatter},
+    ops::Add,
+};
 
 const CHALLENGE_HEADER: (&str, &str) = ("www-authenticate", "Bearer");
 
@@ -37,8 +46,49 @@ impl IntoResponse for UnauthorizedError {
     }
 }
 
+#[derive(Debug)]
+struct HashPasswordError {
+    details: String,
+}
+
+impl HashPasswordError {
+    fn new(msg: &str) -> HashPasswordError {
+        HashPasswordError {
+            details: msg.to_string(),
+        }
+    }
+}
+
+impl Display for HashPasswordError {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        write!(f, "{}", self.details)
+    }
+}
+
+impl Error for HashPasswordError {
+    fn description(&self) -> &str {
+        &self.details
+    }
+}
+
+fn hash_password(password: &str) -> Result<String, HashPasswordError> {
+    let salt = SaltString::generate(&mut OsRng);
+    let hash = Pbkdf2
+        .hash_password(password.as_bytes(), &salt)
+        .map_err(|e| HashPasswordError::new(&e.to_string()))?
+        .to_string();
+    Ok(hash)
+}
+
 fn verify_password(password: &str, password_hash: &str) -> bool {
-    todo!()
+    let parsed_hash = match PasswordHash::new(password_hash) {
+        Ok(parsed_hash) => parsed_hash,
+        Err(_) => return false,
+    };
+
+    Pbkdf2
+        .verify_password(password.as_bytes(), &parsed_hash)
+        .is_ok()
 }
 
 fn generate_access_token(
