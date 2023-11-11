@@ -3,7 +3,7 @@ use axum::Router;
 use std::{future::Future, net::SocketAddr};
 
 fn routes(state: AppState) -> Router {
-    Router::new().nest("/auth", auth::routes(state))
+    Router::new().nest("/auth", auth::routes::router(state))
 }
 
 async fn shutdown(sig: impl Future<Output = ()>, state: AppState) {
