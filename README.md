@@ -1,6 +1,6 @@
 # Boat Broker
 
-A web application for a Boat Brokerage.
+A demo web application for an imagined Boat Brokerage.
 
 ## Getting Started
 
