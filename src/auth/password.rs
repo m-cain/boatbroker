@@ -48,3 +48,22 @@ pub fn verify(password: &str, password_hash: &str) -> bool {
         .verify_password(password.as_bytes(), &parsed_hash)
         .is_ok()
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_hash() {
+        let password = "password";
+        let hash = hash(password).unwrap();
+        assert_ne!(password, hash);
+    }
+
+    #[test]
+    fn test_verify() {
+        let password = "password";
+        let hash = hash(password).unwrap();
+        assert!(verify(password, &hash));
+    }
+}
