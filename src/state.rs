@@ -1,6 +1,6 @@
 use axum::extract::FromRef;
 use sqlx::{postgres::PgPoolOptions, PgPool};
-use std::env;
+use std::{env, sync::Arc};
 
 #[derive(Clone)]
 pub struct AuthSettings {
@@ -85,7 +85,7 @@ impl FromRef<AppState> for PgPool {
 #[derive(Clone)]
 pub struct AppState {
     pub db_pool: PgPool,
-    pub settings: Settings,
+    pub settings: Arc<Settings>,
 }
 
 impl AppState {
@@ -97,6 +97,7 @@ impl AppState {
             .connect(&settings.postgres.dsn)
             .await
             .expect("Failed to connect to Postgres");
+        let settings = Arc::new(settings);
 
         Self { db_pool, settings }
     }
